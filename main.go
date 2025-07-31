@@ -51,6 +51,7 @@ func main() {
 			newsHandlerV1 := v1handler.NewNewsHandler()
 			news.GET("/", newsHandlerV1.GetNewsV1)
 			news.POST("/", newsHandlerV1.PostNewsV1)
+			news.POST("/upload-file", newsHandlerV1.PostUploadFileNewsV1)
 			news.GET("/:slug", newsHandlerV1.GetNewsV1)
 		}
 

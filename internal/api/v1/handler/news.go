@@ -52,6 +52,14 @@ func (nh *NewsHandler) PostNewsV1(ctx *gin.Context) {
 		return
 	}
 
+	//2<<20 -> 2^20 = 1048576 =  1MB
+	if image.Size > 5<<20 {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": "File is too large (5 MB)",
+		})
+		return
+	}
+
 	//os.ModePerm = 0777 -> read, write, excute for owner,group, other
 	err = os.MkdirAll("./upload", os.ModePerm)
 	if err != nil {
@@ -74,5 +82,37 @@ func (nh *NewsHandler) PostNewsV1(ctx *gin.Context) {
 		"status":  params.Status,
 		"image":   image.Filename,
 		"path":    dst,
+	})
+}
+
+func (nh *NewsHandler) PostUploadFileNewsV1(ctx *gin.Context) {
+	var params PostNewsV1Param
+	if err := ctx.ShouldBind(&params); err != nil {
+		ctx.JSON(http.StatusBadRequest, utils.HandleValidationErrors(err))
+		return
+	}
+
+	image, err := ctx.FormFile("image")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": "File is required",
+		})
+		return
+	}
+
+	filename, err := utils.ValidateAndSaveFile(image, "./upload")
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Post News (V1)",
+		"name":    params.Title,
+		"status":  params.Status,
+		"image":   filename,
+		"path":    "./upload/" + filename,
 	})
 }
