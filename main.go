@@ -82,5 +82,6 @@ func main() {
 		}
 	}
 
+	r.StaticFS("/images", gin.Dir("./upload", false))
 	r.Run()
 }
