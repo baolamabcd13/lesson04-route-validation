@@ -2,10 +2,12 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	v1handler "lesson04-route-validation/internal/api/v1/handler"
 	v2handler "lesson04-route-validation/internal/api/v2/handler"
 	"lesson04-route-validation/middleware"
 	"lesson04-route-validation/utils"
+	"log"
 )
 
 func main() {
@@ -13,11 +15,17 @@ func main() {
 		panic(err)
 	}
 
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("Error loading .env file")
+	}
+
 	userHandlerV1 := v1handler.NewUserHandler()
 
 	r := gin.Default()
 
 	//r.Use(middleware.SimpleMiddleware())
+	r.Use(middleware.ApiKeyMiddleware())
 
 	v1 := r.Group("/api/v1")
 	{
@@ -42,7 +50,7 @@ func main() {
 			product.DELETE("/:id", productHandlerV1.DeleteProductsV1)
 		}
 
-		category := v1.Group("/categories").Use(middleware.SimpleMiddleware())
+		category := v1.Group("/categories")
 		{
 			categoryHandlerV1 := v1handler.NewCategoryHandler()
 			category.GET("/:category", categoryHandlerV1.GetCategoryBycategoryV1)
