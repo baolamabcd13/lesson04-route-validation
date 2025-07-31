@@ -1,4 +1,4 @@
-module lesson03-route-group
+module lesson04-route-validation
 
 go 1.24
 

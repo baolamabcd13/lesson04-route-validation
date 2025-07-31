@@ -2,7 +2,8 @@ package v1handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"lesson03-route-group/utils"
+	"lesson04-route-validation/utils"
+	"log"
 	"net/http"
 )
 
@@ -28,6 +29,8 @@ func (ch *CategoryHandler) GetCategoryBycategoryV1(ctx *gin.Context) {
 
 		return
 	}
+
+	log.Println("Into GetCategoryBycategoryV1")
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Category details (V1)",

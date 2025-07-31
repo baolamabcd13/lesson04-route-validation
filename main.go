@@ -2,19 +2,22 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	v1handler "lesson03-route-group/internal/api/v1/handler"
-	v2handler "lesson03-route-group/internal/api/v2/handler"
-	"lesson03-route-group/utils"
+	v1handler "lesson04-route-validation/internal/api/v1/handler"
+	v2handler "lesson04-route-validation/internal/api/v2/handler"
+	"lesson04-route-validation/middleware"
+	"lesson04-route-validation/utils"
 )
 
 func main() {
-	r := gin.Default()
-
 	if err := utils.RegisterValidators(); err != nil {
 		panic(err)
 	}
 
 	userHandlerV1 := v1handler.NewUserHandler()
+
+	r := gin.Default()
+
+	//r.Use(middleware.SimpleMiddleware())
 
 	v1 := r.Group("/api/v1")
 	{
@@ -39,7 +42,7 @@ func main() {
 			product.DELETE("/:id", productHandlerV1.DeleteProductsV1)
 		}
 
-		category := v1.Group("/categories")
+		category := v1.Group("/categories").Use(middleware.SimpleMiddleware())
 		{
 			categoryHandlerV1 := v1handler.NewCategoryHandler()
 			category.GET("/:category", categoryHandlerV1.GetCategoryBycategoryV1)
@@ -53,7 +56,7 @@ func main() {
 			news.POST("/", newsHandlerV1.PostNewsV1)
 			news.POST("/upload-file", newsHandlerV1.PostUploadFileNewsV1)
 			news.POST("/upload-multiple-file", newsHandlerV1.PostUploadMultipleFileNewsV1)
-			news.GET("/:slug", newsHandlerV1.GetNewsV1)
+			news.GET("/:slug", middleware.SimpleMiddleware(), newsHandlerV1.GetNewsV1)
 		}
 
 	}

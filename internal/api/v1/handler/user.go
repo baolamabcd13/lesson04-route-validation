@@ -2,7 +2,9 @@ package v1handler
 
 import (
 	"github.com/gin-gonic/gin"
-	"lesson03-route-group/utils"
+	"lesson04-route-validation/utils"
+	"log"
+
 	"net/http"
 )
 
@@ -33,6 +35,7 @@ func (uh *UserHandler) GetUserByIdV1(ctx *gin.Context) {
 
 		return
 	}
+	log.Println("Into GetUserByIdV1")
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "User details (V1)",
