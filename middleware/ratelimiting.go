@@ -68,6 +68,8 @@ func RateLimitingMiddleware() gin.HandlerFunc {
 				"error":   "Too many request",
 				"message": "Bạn đã gửi quá nhiều request, hãy thử lại sau!!! ",
 			})
+			return
 		}
+		ctx.Next()
 	}
 }
